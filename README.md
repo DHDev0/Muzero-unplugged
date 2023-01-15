@@ -114,8 +114,6 @@ Core Muzero feature:
 * [X] Fix pytorch linear layer initialization. (refer to : https://tinyurl.com/ykrmcnce)
 
 
-
-
 The Muzero Reanalyze new add-on features include:  
   
 * [X] The ability to accommodate any number of players with the provision of player cycle information.
