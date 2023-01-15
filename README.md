@@ -120,7 +120,7 @@ Muzero Reanalyze new add:
 * [X] Capacity to load human play dataset to Demonstration buffer(Reanalyze) or Replay buffer.
 * [X] You can specify the amount of sampled action mcts should use.
 * [X] Add priority scale on neural network and replay buffer priority
-* [X] Diverse option to bound , save and delete game game from reanalyze buffer.
+* [X] Diverse option to bound , save and delete game from reanalyze buffer.
 * [X] Reanalyse_fraction_mode to switch between new game and reanalyze stastisticly or 
 quantitatively with a ratio of reanalyze buffer vs replay buffer,
 
