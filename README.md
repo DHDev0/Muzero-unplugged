@@ -89,7 +89,7 @@ Features
 ========
 
 
-Core Muzerofeature:
+Core Muzero feature:
 * [x] Work for any Gymnasium environments/games. (any combination of continous or/and discrete action and observation space)
 * [x] MLP network for game state observation. (Multilayer perceptron)
 * [x] LSTM network for game state observation. (LSTM)
@@ -113,16 +113,20 @@ Core Muzerofeature:
 * [x] Support : Windows , Linux , MacOS.
 * [X] Fix pytorch linear layer initialization. (refer to : https://tinyurl.com/ykrmcnce)
 
-Muzero Reanalyze new add:
-* [X] Any number of player and more. (you have to provide player cycle)
-* [X] Add reanalyze byffer(and other buffer) and reanalyze ratio
-* [X] Capacity to build human play dataset. (you play and build dataset, CLI Only)
-* [X] Capacity to load human play dataset to Demonstration buffer(Reanalyze) or Replay buffer.
-* [X] You can specify the amount of sampled action mcts should use.
-* [X] Add priority scale on neural network and replay buffer priority
-* [X] Diverse option to bound , save and delete game from reanalyze buffer.
-* [X] Reanalyse_fraction_mode to switch between new game and reanalyze stastisticly or 
-quantitatively with a ratio of reanalyze buffer vs replay buffer,
+
+
+
+The Muzero Reanalyze new add-on features include:  
+  
+* [X] The ability to accommodate any number of players with the provision of player cycle information.
+* [X] The incorporation of reanalyze buffer and reanalyze ratio functionality.
+* [X] The capability to construct human play datasets through experimentation (CLI only).
+* [X] The capability to load human play datasets into the Demonstration buffer or Replay buffer for training.
+* [X] The ability to specify the amount of sampled action that MCTS should utilize.
+* [X] The implementation of a priority scale on neural network and replay buffer priority.
+* [X] Various options for bounding, saving, and deleting games from the reanalyze buffer.
+* [X] The introduction of the reanalyze_fraction_mode, which allows for the statistical or  
+quantitative switch between new game and reanalyze data with a ratio of reanalyze buffer vs replay buffer."
 
 TODO:
 * [ ] Support of [Gymnasium](https://github.com/Farama-Foundation/Gymnasium) 0.27.0
