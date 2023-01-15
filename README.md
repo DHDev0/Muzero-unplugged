@@ -117,7 +117,7 @@ Core Muzero feature:
 The Muzero Reanalyze new add-on features include:  
   
 * [X] The ability to accommodate any number of players with the provision of player cycle information.
-* [X] The incorporation of reanalyze buffer and reanalyze ratio functionality.
+* [X] The incorporation of reanalyze buffer(offline learning) and reanalyze ratio functionality.
 * [X] The capability to construct human play datasets through experimentation (CLI only).
 * [X] The capability to load human play datasets into the Demonstration buffer or Replay buffer for training.
 * [X] The ability to specify the amount of sampled action that MCTS should utilize.
