@@ -51,7 +51,7 @@ CLI
 -----------
 
 
-Build your own dataset with your own play 
+Construct your dataset through experimentation.
 ~~~bash 
 python muzero_cli.py human_buffer config/name_config.json
 ~~~
