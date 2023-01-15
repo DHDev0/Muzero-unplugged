@@ -116,7 +116,7 @@ Core Muzerofeature:
 Muzero Reanalyze new add:
 * [X] Any number of player and more. (you have to provide player cycle)
 * [X] Add reanalyze byffer(and other buffer) and reanalyze ratio
-* [X] Capacity to build human play dataset. (you play and reuse dataset for training)
+* [X] Capacity to build human play dataset. (you play and build dataset, CLI Only)
 * [X] Capacity to load human play dataset to Demonstration buffer(Reanalyze) or Replay buffer.
 * [X] You can specify the amount of sampled action mcts should use.
 * [X] Add priority scale on neural network and replay buffer priority
