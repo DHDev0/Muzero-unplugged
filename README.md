@@ -112,7 +112,7 @@ For practical example, you can use the [Tutorial](https://github.com/DHDev0/Muze
 CLI
 -----------
 
-Set your config file (example): https://github.com/DHDev0/Muzero/blob/main/config/
+Set your config file (example): https://github.com/DHDev0/Muzero-unplugged/blob/main/config/
 
 First and foremost cd to the project folder:
 ~~~bash 
