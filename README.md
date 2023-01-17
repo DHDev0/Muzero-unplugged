@@ -6,7 +6,7 @@ MuZero Unplugged is an extension of the original MuZero algorithm.
 
 Key features :  
 - The Demonstration buffer, which is a collection of expert demonstrations that guide the agent's learning. These demonstrations can come from human players or other agents.  
-- The Reanalyze buffer, which is a collection of agents' demonstrations  
+- The Reanalyze buffer, which is a collection of agents' demonstrations.  
 - The introduction of these two new buffers allows the algorithm to work with environments that do not have a simulator, or to reduce the amount of simulation needed as it does not need to wait for the simulator to generate new states.  
 - The ability to create your own expert demonstrations by experimenting with the simulation.  
 
