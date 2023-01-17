@@ -57,11 +57,11 @@ docker build -t muzero_unplugged .
 
 Start container:
 ~~~bash
-docker run --cpus 2 --gpus 1 -p 8888:8888 muzero
+docker run --cpus 2 --gpus 1 -p 8888:8888 muzero_unplugged
 #or
-docker run --cpus 2 --gpus 1 --memory 2000M -p 8888:8888 muzero
+docker run --cpus 2 --gpus 1 --memory 2000M -p 8888:8888 muzero_unplugged
 #or
-docker run --cpus 2 --gpus 1 --memory 2000M -p 8888:8888 --storage-opt size=15g muzero
+docker run --cpus 2 --gpus 1 --memory 2000M -p 8888:8888 --storage-opt size=15g muzero_unplugged
 ~~~ 
 
 The docker run will start a jupyter lab on https://localhost:8888//lab?token=token (you need the token) with all the necessary dependency for cpu and gpu(Nvidia) compute.
@@ -75,12 +75,12 @@ Option meaning:
 
 Stop the container:
 ~~~bash
-docker stop $(docker ps -q --filter ancestor=muzero)
+docker stop $(docker ps -q --filter ancestor=muzero_unplugged)
 ~~~ 
 
 Delete the container:
 ~~~bash
-docker rmi -f muzero
+docker rmi -f muzero_unplugged
 ~~~ 
 
 Dependency
