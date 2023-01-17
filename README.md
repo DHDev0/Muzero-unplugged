@@ -39,7 +39,7 @@ PIP dependency : [requirement.txt](https://github.com/DHDev0/Muzero-unplugged/bl
 ~~~bash
 git clone https://github.com/DHDev0/Muzero-unplugged.git
 
-cd Muzero
+cd Muzero-unplugged
 
 pip install -r requirements.txt
 ~~~
