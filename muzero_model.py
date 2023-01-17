@@ -33,7 +33,8 @@ class Muzero:
                  scaler_on=True,
                  bin_method="uniform_bin", 
                  bin_decomposition_number=10,
-                 priority_scale=1):
+                 priority_scale=1.,
+                 rescale_value_loss = 1.):
         """
         Init muzero model
         
@@ -135,6 +136,9 @@ class Muzero:
             priority_scale (float):
                 scale the new priority value ( beta for priority in the paper)
                 Defaults to 1.
+                
+            rescale_value_loss (float): scale value loss to give it more or less importance. 
+                Defaults to 1
         """        
 
         self.reset(model_structure, observation_space_dimensions, action_space_dimensions,
@@ -145,51 +149,63 @@ class Muzero:
                    number_of_hidden_layer, load,
                    type_format, use_amp,
                    scaler_on, bin_method,
-                   bin_decomposition_number,priority_scale)
+                   bin_decomposition_number,priority_scale,rescale_value_loss)
 
-    def reset(self, model_structure=None, observation_space_dimensions=None,
-              action_space_dimensions=None, state_space_dimensions=None,
-              k_hypothetical_steps=None, learning_rate=1e-3,
+    def reset(self, model_structure="mlp_model", observation_space_dimensions=None,
+              action_space_dimensions=None, state_space_dimensions=1,
+              k_hypothetical_steps=10, learning_rate=1e-3,
               optimizer = "adam", lr_scheduler = None,loss_type = "general",
               device='cpu', num_of_epoch=300,
               hidden_layer_dimensions=64, number_of_hidden_layer=1,
               load=False, type_format=torch.float32,
               use_amp=True, scaler_on=True,
-              bin_method="uniform_bin", bin_decomposition_number=10,priority_scale=1):
+              bin_method="uniform_bin", bin_decomposition_number=10,
+              priority_scale=1.,rescale_value_loss=1.):
 
         # # # the size of the encoded/support for value and reward
         self.state_dimension = state_space_dimensions
+        assert isinstance(state_space_dimensions,int) , "state_space_dimensions ∈ int | {1 < state_space_dimensions < +inf) "
         
         # # # number of weight for your recursive layer
         self.hidden_layer_dimension = hidden_layer_dimensions
+        assert isinstance(hidden_layer_dimensions,int) , "hidden_layer_dimensions ∈ int | {1 < hidden_layer_dimensions < +inf)"
         
         # # # Recursive layer, number of layer between your init layer and end layer
         self.number_of_hidden_layer = number_of_hidden_layer
+        assert isinstance(number_of_hidden_layer,int) , "number_of_hidden_layer ∈ int | {1 < number_of_hidden_layer < +inf)"
         
         # # # K future step to simulate in the forward pass and loss function
         self.k_hypothetical_steps = k_hypothetical_steps
+        assert isinstance(k_hypothetical_steps,int) , "number_of_hidden_layer ∈ int | {0 < number_of_hidden_layer < +inf)"
         
         # # # type of loss you want, muzero paper show a "general" and "game" loss 
         # # # https://arxiv.org/pdf/1911.08265.pdf [pahe: 19]
         self.loss_type = loss_type
+        assert isinstance(loss_type,str) and loss_type in ["general","general_kkc","game","game_mmc"] , "loss_type ∈ {general,general_kkc,game,game_mmc) ⊆ str"
+        
         # # # Learning rate of the optimizer
         self.lr = learning_rate
+        assert isinstance(learning_rate,float) , "x ∈ float  | {0 < learning_rate < +inf)"
         
         # # # optimizer
         self.opt = optimizer
-        
+        assert isinstance(optimizer,str) and optimizer in ["adam","sgd"] , "optimizer ∈ {sgd,adam) ⊆ str"
+
         # # # lr scheduler
         self.sch = lr_scheduler
-    
+        assert (isinstance(lr_scheduler,str) or lr_scheduler is None) and lr_scheduler in ["steplr","cosineannealinglr","cosineannealinglrwarmrestarts","onecyclelr",None] , "lr_scheduler ∈ {steplr,cosineannealinglr,cosineannealinglrwarmrestarts,onecyclelr) ⊆ str"
+        
         # # # total number of epoch that one want to compute
         self.epoch = num_of_epoch
+        assert isinstance(num_of_epoch,int) , "num_of_epoch ∈ int | {1 < num_of_epoch < +inf) "
         
         # # # count the number of epoch
         self.count = 0
+        assert isinstance(self.count,int) , "self.count ∈ int | {0 ≤ self.count ≤ 0) "
         
         # # # The device to compute on. (CPU or GPU)
         self.device = device
-        
+        assert isinstance(device,str) and device in ["cpu","cuda"] , "device ∈ {cpu,cuda) ⊆ str"
         
         # # # The tensor type for the all process. Set to bfloat16 for cpu
         if self.device == "cpu" and "float16" in str(type_format):
@@ -206,21 +222,25 @@ class Muzero:
             self.use_amp = False
         else:
             self.use_amp = use_amp
+        assert isinstance(use_amp,bool) , "use_amp ∈ bool "
         
         # # # Variable to enable scale of the gradient for small tensor type
         self.scaler_on = True if use_amp else scaler_on
+        assert isinstance(scaler_on,bool) , "scaler_on ∈ bool "
         
         # # # Tag number for your model (can use it to save and reload it)
         self.random_tag = np.random.randint(0, 100000000)
         
         # # # Type of desire model, which will set the type of observation.
         self.model_structure = model_structure  # 'vision_model' , 'mlp_model'
+        assert isinstance(model_structure,str) and model_structure in ['mlp_model','lstm_model','vision_model','vision_conv_lstm_model','transformer_model'] , "model_structure ∈ {mlp_model,lstm_model,vision_model,vision_conv_lstm_model,transformer_model) ⊆ str"
         
         # # # init gradient scaler
         self.scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
         
         # # # allow or not float16 in model matmul operation
         self.fp16backend = "float16" in str(self.type_format)
+        assert isinstance(self.fp16backend,bool) , "self.fp16backend ∈ bool "
         
         # # # Unlock float16 for matmul depending on self.fp16backend value
         torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = self.fp16backend
@@ -233,15 +253,25 @@ class Muzero:
         self.store_loss = []
 
         self.bin_method = bin_method
+        assert isinstance(bin_method,str) and bin_method in ["linear_bin","uniform_bin"] , "bin_method ∈ {linear_bin,uniform_bin) ⊆ str"
         
         self.bin_decomposition_number = bin_decomposition_number
+        assert isinstance(bin_decomposition_number,int) , "bin_decomposition_number ∈ int  | {1 < bin_decomposition_number < +inf)"
+
         
         self.priority_scale = priority_scale
+        assert isinstance(priority_scale,float) , "priority_scale ∈ float  | {0 < priority_scale < 1)"
+
+        
+        self.rescale_value_loss = rescale_value_loss
+        assert isinstance(rescale_value_loss,float) , "rescale_value_loss ∈ float  | {0 < rescale_value_loss < 1)"
+
         
         if not load:
             # # # vision model will use a resize(apply transform in game.py) 98,98,3 RGB image as observation
             # # # mlp_model will flatten the game observation
             self.observation_dimension = self.model_obs(model_structure,observation_space_dimensions)
+            # assert isinstance(self.observation_dimension,int) , "self.observation_dimension ∈ int | {1 < self.observation_dimension < +inf) "
             
             self.model_repo()
                 
@@ -254,8 +284,10 @@ class Muzero:
             action_space.design_observation_space(action_space_dimensions)
             # # # your dictionary ( categorical map )
             self.action_dictionnary = action_space.dictionary
+            # assert isinstance(self.action_dictionnary,list)
             # # # the dimension of the categorical map
             self.action_dimension = action_space.dict_shape[0]
+            assert isinstance(self.action_dimension,int) , "self.action_dimension ∈ int | {1 < self.action_dimension < +inf) "
             
             # # # init model 
             self.representation_function = Representation_function(observation_space_dimensions=self.observation_dimension,
@@ -348,7 +380,6 @@ class Muzero:
         # # # https://pytorch.org/docs/stable/nn.html#loss-functions
         # # # if you prefer to use pytorch loss function
 
-        
         # refer to : https://arxiv.org/pdf/1911.08265.pdf [page 19]
         if self.loss_type == "general":
             self.criterion_value = Loss_function(parameter = (self.action_dimension),
@@ -588,12 +619,7 @@ class Muzero:
 
 
 
-    def fitler_empty_loss_then_rescale_gradient_and_sum_loss(self,target,loss,gradient_scale):
-        # zero_tensor = torch.tensor(0.0 )
-        # if target.nelement() == 0 or torch.isnan(loss) or loss == 0:
-        #     loss = torch.nan_to_num(loss) + zero_tensor
-        #     self.mean_div -= 1
-
+    def rescale_gradient_and_sum_loss(self,loss,gradient_scale):
         self.mean_div += 1
         # # # https://arxiv.org/pdf/1911.08265.pdf [page: 15]
         # # # divide the gradient loss by 1 / num of unroll (k)
@@ -651,7 +677,6 @@ class Muzero:
         
         self.loss_nn = 0.0
         self.new_priority = []
-        self.rescale_value_loss = 1
             
         for k , ( pred , target ) in enumerate(zip(self.Y_pred,self.Y)):
             
@@ -672,8 +697,8 @@ class Muzero:
                 predict_value_k_hypothetical_steps,
                 target_value_k_hypothetical_steps)
             
-            self.fitler_empty_loss_then_rescale_gradient_and_sum_loss(
-                target_value_k_hypothetical_steps, loss * self.rescale_value_loss, gradient_scale)
+            self.rescale_gradient_and_sum_loss(
+                loss * self.rescale_value_loss, gradient_scale)
 
 
             # # # [pred_policy_k_hypothetical_steps vs policy_k_hypothetical_steps]
@@ -683,8 +708,8 @@ class Muzero:
                 predict_policy_k_hypothetical_steps, 
                 target_policy_k_hypothetical_steps)
             
-            self.fitler_empty_loss_then_rescale_gradient_and_sum_loss(
-                target_policy_k_hypothetical_steps, loss , gradient_scale)
+            self.rescale_gradient_and_sum_loss(
+                loss , gradient_scale)
             
             
             # # # [pred_reward_k_hypothetical_steps vs reward_k_hypothetical_steps]
@@ -703,8 +728,8 @@ class Muzero:
                     predict_reward_k_hypothetical_steps, 
                     target_reward_k_hypothetical_steps)
                 
-                self.fitler_empty_loss_then_rescale_gradient_and_sum_loss(
-                    target_reward_k_hypothetical_steps, loss, gradient_scale)
+                self.rescale_gradient_and_sum_loss(
+                    loss, gradient_scale)
             
             #compute priority to actualize the replay buffer with new value
             self.new_priority.append(
@@ -908,13 +933,6 @@ class Muzero:
     
     def save_model(self, directory="model_checkpoint", tag=None, model_update_or_backtrack = None):
 
-        # if model_update_or_backtrack in [True,None]:   
-        #     if model_update_or_backtrack == True:
-        #         print("model updated...")
-        #         self.r_backup = copy.deepcopy(self.representation_function)
-        #         self.d_backup = copy.deepcopy(self.dynamics_function)
-        #         self.p_backup = copy.deepcopy(self.prediction_function)
-
         if model_update_or_backtrack is None:
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -929,11 +947,11 @@ class Muzero:
             torch.save(self.prediction_function,
                     f'{directory}/{self.random_tag}_muzero_prediction_function.pt')
 
-            init_variable = {"observation_space_dimensions": self.observation_dimension,
+            init_variable = {
+                            "model_structure": self.model_structure,
+                            "observation_space_dimensions": self.observation_dimension,
                             "action_space_dimensions": self.action_dimension,
                             "state_space_dimensions": self.state_dimension,
-                            "hidden_layer_dimensions": self.hidden_layer_dimension,
-                            "number_of_hidden_layer": self.number_of_hidden_layer,
                             "k_hypothetical_steps": self.k_hypothetical_steps,
                             "learning_rate": self.lr,
                             "optimizer" : self.opt,
@@ -941,20 +959,17 @@ class Muzero:
                             "lr_scheduler" : self.sch,
                             "num_of_epoch": self.epoch,
                             "device": self.device,
+                            "hidden_layer_dimensions": self.hidden_layer_dimension,
+                            "number_of_hidden_layer": self.number_of_hidden_layer,
                             "random_tag": self.random_tag,
                             "action_map": self.action_dictionnary,
-                            "model_structure": self.model_structure,
-                            "use_amp": self.use_amp}
+                            "use_amp": self.use_amp,
+                            "priority_scale" : self.priority_scale,
+                            "rescale_value_loss" : self.rescale_value_loss
+                            }
 
             with open(f"{directory}/{self.random_tag}_muzero_init_variables.json", "w") as f:
                 json.dump(init_variable, f)
-                
-        # if model_update_or_backtrack == False:
-        #     self.representation_function = copy.deepcopy(self.r_backup)
-        #     self.dynamics_function = copy.deepcopy(self.d_backup)
-        #     self.prediction_function = copy.deepcopy(self.p_backup)
-        #     self.init_criterion_and_optimizer()
-
 
 
     def load_model(self, model_directory="model_checkpoint", tag=0, observation_space_dimensions=None, type_format=torch.float32, device=None):
@@ -977,8 +992,10 @@ class Muzero:
                    load=True,
                    type_format=type_format,
                    use_amp=init_var["use_amp"],
-                   model_structure=init_var["model_structure"])
-        
+                   model_structure=init_var["model_structure"],
+                   priority_scale=init_var["priority_scale"],
+                   rescale_value_loss = init_var["rescale_value_loss"])
+
         self.observation_dimension = init_var["observation_space_dimensions"]
         
         self.model_repo()

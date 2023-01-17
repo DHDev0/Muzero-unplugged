@@ -53,7 +53,7 @@ def main(cli_input):
     ##########################################
     #TYPE USE FOR TRAINING/INFERENCE/BENCHMARK
     compute_type = torch.float32
-    #TODO EMBED PYTORCH WITH STR OPTION
+    #TODO EMBED PYTORCH TYPE WITH STR OPTION
     #########################################
 
 ################## buffer builder ##################
@@ -102,7 +102,9 @@ def main(cli_input):
                         use_amp = config["muzero"]["use_amp"], # use mix precision for gpu (not implement yet)
                         scaler_on = config["muzero"]["scaler_on"], # scale gradient to reduce computation
                         bin_method = config["muzero"]["bin_method"], # "linear_bin" , "uniform_bin" : will have a regular incrementation of action or uniform sampling(pick randomly) from the bound
-                        bin_decomposition_number = config["muzero"]["bin_decomposition_number"]) # number of action to sample from low/high bound of a gym discret box
+                        bin_decomposition_number = config["muzero"]["bin_decomposition_number"],# number of action to sample from low/high bound of a gym discret box
+                        priority_scale=config["muzero"]["priority_scale"],
+                        rescale_value_loss = config["muzero"]["rescale_value_loss"]) 
 
         if config["human_demonstration_buffer_builder"]["path_to_store_game"] is not None:
             human_buffer = DemonstrationBuffer()
@@ -152,7 +154,7 @@ def main(cli_input):
                                                   number_of_training_before_self_play = config["learning_cycle"]["number_of_training_before_self_play"], # number of epoch made by the model before selplay
                                                   model_tag_number = config["learning_cycle"]["model_tag_number"], # tag number use to generate checkpoint
                                                   number_of_worker_selfplay = config["learning_cycle"]["number_of_worker_selfplay"],
-                                                  tempererature_type = config["learning_cycle"]["tempererature_type"], # "static_temperature" ,"linear_decrease_temperature" ,  "extreme_temperature" and "reversal_tanh_temperature"
+                                                  temperature_type = config["learning_cycle"]["temperature_type"], # "static_temperature" ,"linear_decrease_temperature" ,  "extreme_temperature" and "reversal_tanh_temperature"
                                                   verbose = config["learning_cycle"]["verbose"], # if you want to print the epoch|reward|loss during train
                                                   muzero_model = muzero,
                                                   gameplay = gameplay,

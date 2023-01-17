@@ -69,6 +69,7 @@ class Player_cycle:
         
     def player_in_play(self,player_index):    
         return self.cycle_map[player_index % self.cycle_map.size()[0]]
+  
     
 class Monte_carlo_tree_search():
     def __init__(self,
@@ -144,16 +145,34 @@ class Monte_carlo_tree_search():
               ):
         
         self.pb_c_base = pb_c_base
+        assert isinstance(pb_c_base,int) , "pb_c_base ∈ int | {1 < pb_c_base < +inf)"
+
         self.pb_c_init = pb_c_init
+        assert isinstance(pb_c_init,float) , "pb_c_init ∈ float | {0 < pb_c_init < +inf)"
+        
         self.discount = discount
+        assert isinstance(discount,float) , "discount ∈ float | {0 < discount < +inf)"
+        
         self.root_dirichlet_alpha = root_dirichlet_alpha
+        assert isinstance(root_dirichlet_alpha,float) , "root_dirichlet_alpha ∈ float | {0< root_dirichlet_alpha < 1)"
+        
         self.root_exploration_fraction = root_exploration_fraction
+        assert isinstance(root_exploration_fraction,float) , "root_exploration_fraction ∈ float | {0 < root_exploration_fraction < 1)"
+        
+        self.maxium_action_sample = maxium_action_sample
+        assert isinstance(maxium_action_sample,int) , "maxium_action_sample ∈ int | {1 < maxium_action_sample < +inf)"
+        
+        self.num_simulations = num_simulations
+        assert isinstance(num_simulations,int) , "num_simulations ∈ int | {0 < num_simulations < +inf)"
+        
+        self.number_of_player = number_of_player
+        assert isinstance(number_of_player,int) , "number_of_player ∈ int | {1 < number_of_player < +inf)"
+        
+        self.custom_loop = custom_loop
+        assert isinstance(custom_loop,str) or custom_loop is None , "custom_loop ∈ str | 1>2>3>3 "
+        
         self.node = None
         self.model = None
-        self.maxium_action_sample = maxium_action_sample
-        self.num_simulations = num_simulations
-        self.number_of_player = number_of_player
-        self.custom_loop = custom_loop
         self.cycle = Player_cycle(number_of_player = number_of_player, custom_loop = custom_loop)
 
     def generate_root_hidden_state(self, observation):
