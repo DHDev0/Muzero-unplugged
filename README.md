@@ -112,6 +112,8 @@ Core Muzero feature:
 * [x] Commented with link/page to the paper.
 * [x] Support : Windows , Linux , MacOS.
 * [X] Fix pytorch linear layer initialization. (refer to : https://tinyurl.com/ykrmcnce)
+* [ ] Support of [Gymnasium](https://github.com/Farama-Foundation/Gymnasium) 0.27.0
+
 
 
 The Muzero Reanalyze new add-on features include:  
@@ -125,11 +127,10 @@ The Muzero Reanalyze new add-on features include:
 * [X] Various options for bounding, saving, and deleting games from the reanalyze buffer.
 * [X] The introduction of the reanalyze_fraction_mode, which allows for the statistical or  
 quantitative switch between new game and reanalyze data with a ratio of reanalyze buffer vs replay buffer."
+* [X] The implementation of a scaling parameter of the value loss.
 
 TODO:
-* [ ] Support of [Gymnasium](https://github.com/Farama-Foundation/Gymnasium) 0.27.0
 * [ ] Hyperparameter search. (pseudo-code available in self_play.py)
-* [ ] Unittest the codebase and assert argument bound.
 * [ ] Training and deploy on cloud cluster using Kubeflow, Airflow or Ray for aws,gcp and azure.
 
 
