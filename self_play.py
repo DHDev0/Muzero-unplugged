@@ -12,7 +12,7 @@ from monte_carlo_tree_search import *
 from muzero_model import *
 from replay_buffer import *
 
-import gym
+import gymnasium as gym
 
 
 ##########################################################################################################################
@@ -222,11 +222,11 @@ def learning_cycle(number_of_iteration=10000,
             replay_buffer : (replay_buffer.class)
     """
 
-    assert isinstance(number_of_iteration,int) , "number_of_iterationt ∈ int | {1 < number_of_iteration < +inf)"
-    assert isinstance(number_of_self_play_before_training,int) , "number_of_self_play_before_training ∈ int | {0 < number_of_self_play_before_training < +inf)"
-    assert isinstance(number_of_training_before_self_play,int) , "number_of_training_before_self_play ∈ int | {0 < number_of_training_before_self_play < +inf)"
-    assert isinstance(model_tag_number,int) , "model_tag_number ∈ int | {0 < model_tag_number < +inf)"
-    assert isinstance(number_of_worker_selfplay,int) , "number_of_worker_selfplay ∈ float | {0 < discount < +inf)"
+    assert isinstance(number_of_iteration,int) and number_of_iteration >= 1 , "number_of_iterationt ∈ int | {1 < number_of_iteration < +inf)"
+    assert isinstance(number_of_self_play_before_training,int) and number_of_self_play_before_training >= 0, "number_of_self_play_before_training ∈ int | {0 < number_of_self_play_before_training < +inf)"
+    assert isinstance(number_of_training_before_self_play,int) and number_of_training_before_self_play >= 0, "number_of_training_before_self_play ∈ int | {0 < number_of_training_before_self_play < +inf)"
+    assert isinstance(model_tag_number,int) and model_tag_number >= 0, "model_tag_number ∈ int | {0 < model_tag_number < +inf)"
+    assert isinstance(number_of_worker_selfplay,int) and number_of_worker_selfplay >= 0, "number_of_worker_selfplay ∈ float | {0 < discount < +inf)"
     assert isinstance(temperature_type,str) and temperature_type in ["reversal_tanh_temperature","extreme_temperature","linear_decrease_temperature","static_temperature","static_one_temperature"], "temperature_type ∈ {reversal_tanh_temperature,extreme_temperature,linear_decrease_temperature,static_temperature,static_one_temperature} ⊆ str "
     assert isinstance(verbose,bool) , "verbose ∈ bool"
 

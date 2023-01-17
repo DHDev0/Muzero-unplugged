@@ -55,33 +55,33 @@ class ReplayBuffer():
         """        
         
         self.window_size = window_size
-        assert isinstance(window_size,int) , "window_size ∈ int | {1 < window_size < +inf)"
+        assert (isinstance(window_size, int) and window_size >= 1), "window_size ∈ int | {1 < window_size < +inf)"
 
         self.batch_size = batch_size
-        assert isinstance(batch_size,int) , "batch_size ∈ int | {1 < batch_size < +inf)"
+        assert (isinstance(batch_size,int) and batch_size >= 1) , "batch_size ∈ int | {1 < batch_size < +inf)"
 
         self.num_unroll = num_unroll
-        assert isinstance(num_unroll,int) , "num_unroll ∈ int | {0 < num_unroll < +inf)"
+        assert (isinstance(num_unroll,int) and num_unroll >= 0), "num_unroll ∈ int | {0 < num_unroll < +inf)"
 
         self.td_steps = td_steps
-        assert isinstance(td_steps,int) , "td_steps ∈ int | {0 < td_steps < +inf)"
-        
+        assert (isinstance(td_steps,int) and td_steps >=0), "td_steps ∈ int | {0 < td_steps < +inf)"
+
         self.game_sampling = game_sampling
         assert isinstance(game_sampling,str) and game_sampling in ["priority","uniform"] , "game_sampling ∈ {priority,uniform) ⊆ str"
 
         self.position_sampling = position_sampling
         assert isinstance(position_sampling,str) and position_sampling in ["priority","uniform"] , "position_sampling ∈ {priority,uniform) ⊆ str"
-        
+
         self.reanalyze_stack = reanalyze_stack
         assert isinstance(reanalyze_stack,list) , "reanalyze_stack ∈ list"
 
         self.reanalyse_fraction = reanalyse_fraction
-        assert isinstance(reanalyse_fraction,float) , "reanalyse_fraction ∈ float | {0 < reanalyse_fraction < 1)"
-        
+        assert (isinstance(reanalyse_fraction,float) and 0 <= reanalyse_fraction <= 1), "reanalyse_fraction ∈ float | {0 < reanalyse_fraction < 1)"
+
         self.reanalyse_fraction_mode = reanalyse_fraction_mode
         assert isinstance(reanalyse_fraction_mode,str) and reanalyse_fraction_mode in ["ratio","chance"] , "reanalyse_fraction_mode ∈ {ratio,chance) ⊆ str"
 
-        self.buffer = [] 
+        self.buffer = []
         self.prio = []
         self.prio_position = []
         self.prio_game = []

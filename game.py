@@ -5,6 +5,7 @@ import torch
 import random
 import time
 import json
+import gymnasium as gym
 # # # for more details on the Game class
 # # # refere to the pseudocode available at https://arxiv.org/src/1911.08265v2/anc/pseudocode.py
 
@@ -54,17 +55,17 @@ class Game():
         self.action_map = action_map
 
         self.discount = discount
-        assert isinstance(discount,float) , "discount ∈ float | {0 < discount < +inf)" 
+        assert isinstance(discount,float) and discount >= 0 , "discount ∈ float | {0 < discount < +inf)" 
         self.limit_of_game_play = limit_of_game_play
-        assert isinstance(limit_of_game_play,(float,int)) , "limit_of_game_play ∈ int || float | {1 < limit_of_game_play < +inf)" 
+        assert isinstance(limit_of_game_play,(float,int)) and limit_of_game_play >= 0, "limit_of_game_play ∈ int || float | {1 < limit_of_game_play < +inf)" 
         self.action_space_size = action_dimension
-        assert isinstance(action_dimension,int) , "action_dimension ∈ float | {1 < action_dimension < +inf)" 
+        assert isinstance(action_dimension,int) and action_dimension >= 1, "action_dimension ∈ float | {1 < action_dimension < +inf)" 
         self.rgb_observation = rgb_observation
         assert isinstance(rgb_observation,bool), "rgb_observation ∈ bool "
         self.done = False
         assert isinstance(self.done,bool) , "self.done ∈ bool"
         self.priority_scale = priority_scale
-        assert isinstance(priority_scale,(float,int)) , "priority_scale ∈ float | {0 < priority_scale < 1)" 
+        assert isinstance(priority_scale,(float,int)) and 0 <= priority_scale <= 1, "priority_scale ∈ float | {0 < priority_scale < 1)" 
 
         
         #game storage

@@ -8,7 +8,7 @@ from neural_network_mlp_model import l1, l2, weights_init
 from neural_network_mlp_model import Loss_function
 import itertools
 
-import gym
+import gymnasium as gym
 
 
 class Muzero:
@@ -164,19 +164,19 @@ class Muzero:
 
         # # # the size of the encoded/support for value and reward
         self.state_dimension = state_space_dimensions
-        assert isinstance(state_space_dimensions,int) , "state_space_dimensions ∈ int | {1 < state_space_dimensions < +inf) "
+        assert isinstance(state_space_dimensions,int) and state_space_dimensions >= 1 , "state_space_dimensions ∈ int | {1 < state_space_dimensions < +inf) "
         
         # # # number of weight for your recursive layer
         self.hidden_layer_dimension = hidden_layer_dimensions
-        assert isinstance(hidden_layer_dimensions,int) , "hidden_layer_dimensions ∈ int | {1 < hidden_layer_dimensions < +inf)"
+        assert isinstance(hidden_layer_dimensions,int) and hidden_layer_dimensions >= 1, "hidden_layer_dimensions ∈ int | {1 < hidden_layer_dimensions < +inf)"
         
         # # # Recursive layer, number of layer between your init layer and end layer
         self.number_of_hidden_layer = number_of_hidden_layer
-        assert isinstance(number_of_hidden_layer,int) , "number_of_hidden_layer ∈ int | {1 < number_of_hidden_layer < +inf)"
+        assert isinstance(number_of_hidden_layer,int) and number_of_hidden_layer >= 0 , "number_of_hidden_layer ∈ int | {0 < number_of_hidden_layer < +inf)"
         
         # # # K future step to simulate in the forward pass and loss function
         self.k_hypothetical_steps = k_hypothetical_steps
-        assert isinstance(k_hypothetical_steps,int) , "number_of_hidden_layer ∈ int | {0 < number_of_hidden_layer < +inf)"
+        assert isinstance(k_hypothetical_steps,int) and k_hypothetical_steps >= 0, "k_hypothetical_steps ∈ int | {0 < k_hypothetical_steps < +inf)"
         
         # # # type of loss you want, muzero paper show a "general" and "game" loss 
         # # # https://arxiv.org/pdf/1911.08265.pdf [pahe: 19]
@@ -185,7 +185,7 @@ class Muzero:
         
         # # # Learning rate of the optimizer
         self.lr = learning_rate
-        assert isinstance(learning_rate,float) , "x ∈ float  | {0 < learning_rate < +inf)"
+        assert isinstance(learning_rate,float) and learning_rate >= 0, "x ∈ float  | {0 < learning_rate < +inf)"
         
         # # # optimizer
         self.opt = optimizer
@@ -197,11 +197,11 @@ class Muzero:
         
         # # # total number of epoch that one want to compute
         self.epoch = num_of_epoch
-        assert isinstance(num_of_epoch,int) , "num_of_epoch ∈ int | {1 < num_of_epoch < +inf) "
+        assert isinstance(num_of_epoch,int) and num_of_epoch >=1, "num_of_epoch ∈ int | {1 < num_of_epoch < +inf) "
         
         # # # count the number of epoch
         self.count = 0
-        assert isinstance(self.count,int) , "self.count ∈ int | {0 ≤ self.count ≤ 0) "
+        assert isinstance(self.count,int) and self.count == 0, "self.count ∈ int | {0 ≤ self.count ≤ 0) "
         
         # # # The device to compute on. (CPU or GPU)
         self.device = device
@@ -256,15 +256,15 @@ class Muzero:
         assert isinstance(bin_method,str) and bin_method in ["linear_bin","uniform_bin"] , "bin_method ∈ {linear_bin,uniform_bin) ⊆ str"
         
         self.bin_decomposition_number = bin_decomposition_number
-        assert isinstance(bin_decomposition_number,int) , "bin_decomposition_number ∈ int  | {1 < bin_decomposition_number < +inf)"
+        assert isinstance(bin_decomposition_number,int) and bin_decomposition_number >= 1, "bin_decomposition_number ∈ int  | {1 < bin_decomposition_number < +inf)"
 
         
         self.priority_scale = priority_scale
-        assert isinstance(priority_scale,float) , "priority_scale ∈ float  | {0 < priority_scale < 1)"
+        assert isinstance(priority_scale,(int,float)) and 0 <= priority_scale <= 1, "priority_scale ∈ float  | {0 < priority_scale < 1)"
 
         
         self.rescale_value_loss = rescale_value_loss
-        assert isinstance(rescale_value_loss,float) , "rescale_value_loss ∈ float  | {0 < rescale_value_loss < 1)"
+        assert isinstance(rescale_value_loss,(int,float)) and 0 <= rescale_value_loss <=1, "rescale_value_loss ∈ float  | {0 < rescale_value_loss < 1)"
 
         
         if not load:
@@ -287,7 +287,7 @@ class Muzero:
             # assert isinstance(self.action_dictionnary,list)
             # # # the dimension of the categorical map
             self.action_dimension = action_space.dict_shape[0]
-            assert isinstance(self.action_dimension,int) , "self.action_dimension ∈ int | {1 < self.action_dimension < +inf) "
+            assert (isinstance(self.action_dimension,int) and self.action_dimension >= 1), "self.action_dimension ∈ int | {1 < self.action_dimension < +inf) "
             
             # # # init model 
             self.representation_function = Representation_function(observation_space_dimensions=self.observation_dimension,

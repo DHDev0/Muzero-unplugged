@@ -93,7 +93,7 @@ Library :
 * torch 1.13.0
 * torchvision 0.14.0
 * ray 2.0.1 
-* gym 0.26.2 (incoming gymnasium 0.27.0)
+* gym 0.26.2
 * matplotlib >=3.0
 * numpy 1.21.5
 
@@ -180,7 +180,7 @@ Core Muzero feature:
 * [x] Commented with link/page to the paper.
 * [x] Support : Windows , Linux , MacOS.
 * [X] Fix pytorch linear layer initialization. (refer to : https://tinyurl.com/ykrmcnce)
-* [ ] Support of [Gymnasium](https://github.com/Farama-Foundation/Gymnasium) 0.27.0
+* [X] Support of [Gymnasium](https://github.com/Farama-Foundation/Gymnasium) 0.27.0
 
 
 

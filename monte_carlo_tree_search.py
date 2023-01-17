@@ -145,28 +145,28 @@ class Monte_carlo_tree_search():
               ):
         
         self.pb_c_base = pb_c_base
-        assert isinstance(pb_c_base,int) , "pb_c_base ∈ int | {1 < pb_c_base < +inf)"
+        assert isinstance(pb_c_base,int) and pb_c_base >= 1, "pb_c_base ∈ int | {1 < pb_c_base < +inf)"
 
         self.pb_c_init = pb_c_init
-        assert isinstance(pb_c_init,float) , "pb_c_init ∈ float | {0 < pb_c_init < +inf)"
+        assert isinstance(pb_c_init,float) and pb_c_init >= 0 , "pb_c_init ∈ float | {0 < pb_c_init < +inf)"
         
         self.discount = discount
-        assert isinstance(discount,float) , "discount ∈ float | {0 < discount < +inf)"
+        assert isinstance(discount,(int,float)) and discount >= 0, "discount ∈ float | {0 < discount < +inf)"
         
         self.root_dirichlet_alpha = root_dirichlet_alpha
-        assert isinstance(root_dirichlet_alpha,float) , "root_dirichlet_alpha ∈ float | {0< root_dirichlet_alpha < 1)"
+        assert isinstance(root_dirichlet_alpha,float) and 0 <= root_dirichlet_alpha <= 1, "root_dirichlet_alpha ∈ float | {0< root_dirichlet_alpha < 1)"
         
         self.root_exploration_fraction = root_exploration_fraction
-        assert isinstance(root_exploration_fraction,float) , "root_exploration_fraction ∈ float | {0 < root_exploration_fraction < 1)"
+        assert isinstance(root_exploration_fraction,float) and 0 <= root_exploration_fraction <= 1 , "root_exploration_fraction ∈ float | {0 < root_exploration_fraction < 1)"
         
         self.maxium_action_sample = maxium_action_sample
-        assert isinstance(maxium_action_sample,int) , "maxium_action_sample ∈ int | {1 < maxium_action_sample < +inf)"
+        assert isinstance(maxium_action_sample,int) and maxium_action_sample >= 1, "maxium_action_sample ∈ int | {1 < maxium_action_sample < +inf)"
         
         self.num_simulations = num_simulations
-        assert isinstance(num_simulations,int) , "num_simulations ∈ int | {0 < num_simulations < +inf)"
+        assert isinstance(num_simulations,int) and num_simulations >= 0, "num_simulations ∈ int | {0 < num_simulations < +inf)"
         
         self.number_of_player = number_of_player
-        assert isinstance(number_of_player,int) , "number_of_player ∈ int | {1 < number_of_player < +inf)"
+        assert isinstance(number_of_player,int) and number_of_player >= 1, "number_of_player ∈ int | {1 < number_of_player < +inf)"
         
         self.custom_loop = custom_loop
         assert isinstance(custom_loop,str) or custom_loop is None , "custom_loop ∈ str | 1>2>3>3 "
