@@ -29,7 +29,9 @@
         "use_amp": false,
         "scaler_on": false,
         "bin_method": "uniform_bin",
-        "bin_decomposition_number": 10
+        "bin_decomposition_number": 10,
+        "priority_scale": 0.5,
+        "rescale_value_loss": 1.0
     },
     "replaybuffer": {
         "window_size": 500,
@@ -58,7 +60,7 @@
         "number_of_iteration": 10000,
         "number_of_self_play_before_training": 1,
         "number_of_training_before_self_play": 1,
-        "tempererature_type": "static_temperature",
+        "temperature_type": "static_temperature",
         "model_tag_number": 421,
         "verbose": true,
         "number_of_worker_selfplay": 0

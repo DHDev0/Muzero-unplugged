@@ -161,56 +161,46 @@ class Loss_function:
         
         Parameters
         ----------
-        
-        
             Transform
             ---------
-            "no_transform" : return the input
-            
-            "softmax_transform" : softmax the input
-            
-            "zero_clamp_transform" : to solve log(0) 
-             refer to : https://github.com/pytorch/pytorch/blob/949559552004db317bc5ca53d67f2c62a54383f5/aten/src/THNN/generic/BCECriterion.c#L27
-            
-            "clamp_transform" : bound value betwen 0.01 to 0.99
-
-
+                "no_transform" : return the input
+                
+                "softmax_transform" : softmax the input
+                
+                "zero_clamp_transform" : to solve log(0) 
+                refer to : https://github.com/pytorch/pytorch/blob/949559552004db317bc5ca53d67f2c62a54383f5/aten/src/THNN/generic/BCECriterion.c#L27
+                
+                "clamp_transform" : bound value betwen 0.01 to 0.99
+                
             Loss function
             -------------
-            
-            https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-            loss.kldiv
-            
-            https://en.wikipedia.org/wiki/Cross_entropy
-            loss.cross_entropy
-            
-            https://en.wikipedia.org/wiki/Mean_squared_error
-            loss.mse
-            
-            https://en.wikipedia.org/wiki/Root-mean-square_deviation
-            loss.rmse
-            
-            https://en.wikipedia.org/wiki/Residual_sum_of_squares
-            loss.square_error
-            
-            zero loss (set loss to 0)
+                https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
+                loss.kldiv
+                
+                https://en.wikipedia.org/wiki/Cross_entropy
+                loss.cross_entropy
+                
+                https://en.wikipedia.org/wiki/Mean_squared_error
+                loss.mse
+                
+                https://en.wikipedia.org/wiki/Root-mean-square_deviation
+                loss.rmse
+                
+                https://en.wikipedia.org/wiki/Residual_sum_of_squares
+                loss.square_error
+                
+                zero loss (set loss to 0)
             loss.zero_loss
         """
         self.transform = {
                     "no_transform" : lambda x : x ,
-                    "softmax_transform_last_dim" : lambda x : torch.nn.Softmax(dim=-1)(x),
                     "softmax_transform" : lambda x : torch.nn.Softmax(dim=1)(x),
-                    "clamp_transform" : lambda x : (x/10)+0.5,
                     "zero_clamp_transform" : lambda x : x + 1e-9,
-                    "mean_clamp_transform" : lambda x : (x + 1e-6)/(x + 1e-6).sum(),
-                    "avg_transform" : lambda x : (torch.abs(x)+ 1e-6)/(torch.abs(x)+ 1e-6).sum(),
                     "sigmoid_transform": lambda x : torch.nn.Sigmoid()(x),
                     "tanh_transform": lambda x : torch.nn.Tanh()(x),
                     "relu_transform": lambda x : torch.nn.ELU() (x),
                     "shrink_transform": lambda x : torch.nn.Softshrink(lambd=1e-3)(x),
-                    "avg_expbound" : lambda x : self.avg_sum(x),
-                    "scale_to_bound_action" : lambda x : self.scale_to_bound_action(x),
-                    "sum" : lambda x : x.sum(dim=-1, keepdim= True)
+
                     }
         if isinstance(prediction,str):
             self.prediction_transform = self.transform[prediction]
@@ -237,9 +227,6 @@ class Loss_function:
     def kldiv(self, input, target):
         p = self.label_transform(target)
         q = self.prediction_transform(input)
-        # print("P: ",p)
-        # print("Q: ",q)
-        # print("P_Q",(torch.log(p)-torch.log(q)))
         return (p*(torch.log(p)-torch.log(q))).sum(1)
     
     def cross_entropy(self, input, target):
@@ -251,40 +238,20 @@ class Loss_function:
     def square_error(self, input, target):
         p = self.label_transform(target)
         q = self.prediction_transform(input)
-        return ((p-q)**(1/2)).sum()
+        return ((p-q)**(1/2)).sum(1)
 
     def mse(self, input, target):
         p = self.label_transform(target)
         q = self.prediction_transform(input)
-        # print("P: ",p)
-        # print("Q: ",q)
-        # print("res: ",((p-q)**2).mean())
         return ((p-q)**2).mean(1)
 
     def rmse(self, input, target):
         p = self.label_transform(target)
         q = self.prediction_transform(input)
-        return torch.sqrt(((p-q)**2).mean())
+        return torch.sqrt(((p-q)**2).mean(1))
     
     def zero_loss(self, input, target):
         return(input+target).sum(1)*0
-    
-    def avg_sum(self,x):
-        xx = x.flatten()
-        cc = 0 
-        for i in xx:
-            if i > 1:
-                v_c = i
-            if i == 0:
-                v_c = 1
-            if  i < 1 and i > 0 :
-                v_c = i
-            if i < 0:
-                v_c = 1/torch.abs(i)
-            xx[cc] = v_c
-            cc+=1
-        res = xx.reshape(x.shape[:]).clone()
-        return ((x*0)+res) / ((x*0)+res).sum()
       
 
 

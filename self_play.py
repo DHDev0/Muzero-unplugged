@@ -154,7 +154,7 @@ def temperature_scheduler(epoch=1, actual_epoch=1, mode = "static_temperature"):
             return 0.5
         else:
             return 0.2
-        
+
     if mode == "static_temperature":
         return 0.0
     
@@ -167,10 +167,9 @@ def temperature_scheduler(epoch=1, actual_epoch=1, mode = "static_temperature"):
 def learning_cycle(number_of_iteration=10000,
                    number_of_self_play_before_training=1,
                    number_of_training_before_self_play=1,
-                   number_of_mcts_simulation=11,
                    model_tag_number=124,
                    number_of_worker_selfplay=1,
-                   tempererature_type = "static_temperature",
+                   temperature_type = "static_temperature",
                    verbose=True,
                    muzero_model=None,
                    gameplay=None,
@@ -202,7 +201,7 @@ def learning_cycle(number_of_iteration=10000,
             How many self-play should be run in parallele
             Defaults to 1.
 
-            tempererature_type (str): 
+            temperature_type (str): 
             choice between "static_temperature" ,"linear_decrease_temperature" ,  "extreme_temperature" and "reversal_tanh_temperature"
             "static_temperature" : will always choice the argmax of the predicted policy
             "linear_decrease_temperature" : Training [0% -> 50, 50% -> 75%, 75% -> 100%] map to temperature [1,0.5,0.25]
@@ -221,7 +220,15 @@ def learning_cycle(number_of_iteration=10000,
             monte_carlo_tree_search : (mcts.class)
             
             replay_buffer : (replay_buffer.class)
-    """    
+    """
+
+    assert isinstance(number_of_iteration,int) , "number_of_iterationt ∈ int | {1 < number_of_iteration < +inf)"
+    assert isinstance(number_of_self_play_before_training,int) , "number_of_self_play_before_training ∈ int | {0 < number_of_self_play_before_training < +inf)"
+    assert isinstance(number_of_training_before_self_play,int) , "number_of_training_before_self_play ∈ int | {0 < number_of_training_before_self_play < +inf)"
+    assert isinstance(model_tag_number,int) , "model_tag_number ∈ int | {0 < model_tag_number < +inf)"
+    assert isinstance(number_of_worker_selfplay,int) , "number_of_worker_selfplay ∈ float | {0 < discount < +inf)"
+    assert isinstance(temperature_type,str) and temperature_type in ["reversal_tanh_temperature","extreme_temperature","linear_decrease_temperature","static_temperature","static_one_temperature"], "temperature_type ∈ {reversal_tanh_temperature,extreme_temperature,linear_decrease_temperature,static_temperature,static_one_temperature} ⊆ str "
+    assert isinstance(verbose,bool) , "verbose ∈ bool"
 
     # try:
     # # # Training
@@ -243,7 +250,7 @@ def learning_cycle(number_of_iteration=10000,
                     environment=gameplay,
                     model=muzero_model,
                     monte_carlo_tree_search=monte_carlo_tree_search,
-                    temperature=temperature_scheduler(number_of_iteration+1, ep, mode = tempererature_type),
+                    temperature=temperature_scheduler(number_of_iteration+1, ep, mode = temperature_type),
                     replay_buffer = replay_buffer)
                 for _ in range(number_of_self_play_before_training)])
         
@@ -252,7 +259,7 @@ def learning_cycle(number_of_iteration=10000,
                 environment=gameplay,
                 model=muzero_model,
                 monte_carlo_tree_search=monte_carlo_tree_search,
-                temperature=temperature_scheduler(number_of_iteration+1, ep, mode = tempererature_type),
+                temperature=temperature_scheduler(number_of_iteration+1, ep, mode = temperature_type),
                 replay_buffer = replay_buffer)
             for _ in range(number_of_self_play_before_training)]
                                         
@@ -264,7 +271,9 @@ def learning_cycle(number_of_iteration=10000,
 
         # # # save best model. self_play serve as dataset and performace test
         did_better = None if reward[-1] == max(reward) and not all(g.reanalyzed for g in game ) else "do not save"
-        if did_better is None: print("save model with : ", reward[-1]," reward")
+        if did_better is None: 
+            print(" "*1000,end='\r')
+            print("save model with : ", reward[-1]," reward")
         muzero_model.save_model(
             directory="model_checkpoint", 
             tag=model_tag_number, 
@@ -281,15 +290,16 @@ def learning_cycle(number_of_iteration=10000,
 
         prompt_feedback = f'EPOCH {ep} || selfplay reward: {reward[-1]} || training loss: { loss[-1] }||'
         epoch_pr.append(prompt_feedback)
-        if verbose: print(prompt_feedback)
+        if verbose: 
+            print(" "*1000,end='\r')
+            print(prompt_feedback,end='\r')
     
     configuration = {'number_of_iteration' : number_of_iteration,
                      'number_of_self_play_before_training' : number_of_self_play_before_training,
                      'number_of_training_before_self_play' : number_of_training_before_self_play,
-                     'number_of_mcts_simulation' : number_of_mcts_simulation,
                      'model_tag_number' : model_tag_number,
                      'number_of_worker_selfplay' : number_of_worker_selfplay,
-                     'tempererature_type' : tempererature_type,
+                     'temperature_type' : temperature_type,
                      "verbose" : verbose}
 
     return epoch_pr, loss, reward, configuration
@@ -606,7 +616,9 @@ def generate_config_file(env = None,
                                   "use_amp" : muzero.use_amp,
                                   "scaler_on": False,
                                   "bin_method" : muzero.bin_method,
-                                  "bin_decomposition_number" : muzero.bin_decomposition_number}
+                                  "bin_decomposition_number" : muzero.bin_decomposition_number,
+                                  "priority_scale" : muzero.priority_scale,
+                                  "rescale_value_loss" : muzero.rescale_value_loss }
                       }
         list_holder.append(dict_model)
 
@@ -627,10 +639,10 @@ def generate_config_file(env = None,
                                                   "discount" : mcts.discount, 
                                                   "root_dirichlet_alpha" : mcts.root_dirichlet_alpha, 
                                                   "root_exploration_fraction" : mcts.root_exploration_fraction,
-                                       "num_simulations" : mcts.num_simulations,
-                                      "maxium_action_sample" : mcts.maxium_action_sample,
-                                       "number_of_player" : mcts.number_of_player, 
-                                       "custom_loop" : mcts.custom_loop}
+                                                  "num_simulations" : mcts.num_simulations,
+                                                  "maxium_action_sample" : mcts.maxium_action_sample,
+                                                  "number_of_player" : mcts.number_of_player, 
+                                                  "custom_loop" : mcts.custom_loop}
                     }
         list_holder.append(dict_mcts)
     
@@ -642,7 +654,7 @@ def generate_config_file(env = None,
         dict_lc = {"learning_cycle" : {"number_of_iteration" : learning_configuration['number_of_iteration'],
                                        "number_of_self_play_before_training" : learning_configuration['number_of_self_play_before_training'],
                                        "number_of_training_before_self_play" : learning_configuration['number_of_training_before_self_play'],
-                                       "tempererature_type" : learning_configuration['tempererature_type'], 
+                                       "temperature_type" : learning_configuration['temperature_type'], 
                                        "model_tag_number" : learning_configuration['model_tag_number'],
                                        "verbose" : learning_configuration["verbose"],
                                        "number_of_worker_selfplay": learning_configuration['number_of_worker_selfplay']}
@@ -655,7 +667,7 @@ def generate_config_file(env = None,
         dict_playgame = {"play_game_from_checkpoint":{"model_tag" : learning_configuration['model_tag_number'],
                                                       "model_device" : muzero.device,
                                                       "mcts_with_or_without_dirichlet_noise" : True,
-                                                      "number_of_monte_carlo_tree_search_simulation" : learning_configuration['number_of_mcts_simulation'],       
+                                                      "number_of_monte_carlo_tree_search_simulation" : mcts.num_simulations,       
                                                       "temperature" : 0,
                                                       "game_iter" : gameplay.limit_of_game_play,
                                                       "slow_mo_in_second" : 0.0,
