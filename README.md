@@ -93,7 +93,7 @@ Library :
 * torch 1.13.0
 * torchvision 0.14.0
 * ray 2.0.1 
-* gym 0.26.2
+* gymnasium 0.27.0
 * matplotlib >=3.0
 * numpy 1.21.5
 
