@@ -49,27 +49,36 @@ class Game():
             priority_scale (float):
                 scale the new priority value ( beta for priority in the paper)
                 Defaults to 1.
-        """        
-        #NEED TO EXPLAIN EACH VARIABLE
+        """     
+        self.env = gym_env
+        self.action_map = action_map
+
+        self.discount = discount
+        assert isinstance(discount,float) , "discount ∈ float | {0 < discount < +inf)" 
+        self.limit_of_game_play = limit_of_game_play
+        assert isinstance(limit_of_game_play,(float,int)) , "limit_of_game_play ∈ int || float | {1 < limit_of_game_play < +inf)" 
+        self.action_space_size = action_dimension
+        assert isinstance(action_dimension,int) , "action_dimension ∈ float | {1 < action_dimension < +inf)" 
+        self.rgb_observation = rgb_observation
+        assert isinstance(rgb_observation,bool), "rgb_observation ∈ bool "
+        self.done = False
+        assert isinstance(self.done,bool) , "self.done ∈ bool"
+        self.priority_scale = priority_scale
+        assert isinstance(priority_scale,(float,int)) , "priority_scale ∈ float | {0 < priority_scale < 1)" 
+
+        
+        #game storage
         self.action_history = []
         self.rewards = []
         self.policies = []
-        self.discount = discount
-        
         self.root_values = []
         self.child_visits = []
-        
-        self.env = gym_env
         self.observations = []
-        self.done = False
-        self.limit_of_game_play = limit_of_game_play
         
-        self.action_map = action_map
-        self.action_space_size = action_dimension
-        
-        self.rgb_observation = rgb_observation
-        shape = observation_dimension[:-1] if type(observation_dimension) == tuple else None #(24,24)
+        #Status to know if the game was already reanalyze
+        self.reanalyzed = False
 
+        shape = observation_dimension[:-1] if type(observation_dimension) == tuple else None #(24,24)
         if shape != None:
             self.transform_rgb = transforms.Compose([lambda x : x.copy().astype(np.uint8), #make a copy of the array and change type to uint8(allow the next transform to rescale)
                                                     transforms.ToTensor(),       #will permute dimension to the appropiate channel for image and rescale between 0 and 1
@@ -77,11 +86,6 @@ class Game():
                                                     lambda x : x[None,...] ])     #add an extra dimension at the beginning for batch
         else: 
             self.transform_rgb = None
-            
-        self.game_prio = 0
-        self.mouve_prio = 0
-        self.reanalyzed = False
-        self.priority_scale = priority_scale
     
     def tuple_test_obs(self,x):
         if isinstance(x,tuple):
