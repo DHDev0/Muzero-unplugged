@@ -1,11 +1,50 @@
 # Muzero Unplugged
 
-Pytorch Implementation of [Muzero Unplugged](https://arxiv.org/abs/2104.06294). Base on [Muzero](https://github.com/DHDev0/Muzero/) and incorporate new feature of muzero unplugged.
+Pytorch Implementation of [Muzero Unplugged](https://arxiv.org/abs/2104.06294). Base on [Muzero](https://github.com/DHDev0/Muzero/) and incorporate the new feature of muzero unplugged.
 
-Work in progress...
+MuZero Unplugged is an extension of the original MuZero algorithm.
+
+Key features :  
+- The Demonstration buffer, which is a collection of expert demonstrations that guide the agent's learning. These demonstrations can come from human players or other agents.  
+- The Reanalyze buffer, which is a collection of agents' demonstrations  
+- The introduction of these two new buffers allows the algorithm to work with environments that do not have a simulator, or to reduce the amount of simulation needed as it does not need to wait for the simulator to generate new states.  
+- The ability to create your own expert demonstrations by experimenting with the simulation.  
 
 
+Table of contents
+=================
+<!--ts-->
+   * [Getting started](#getting-started)
+      * [Local Installation](#local-installation)
+      * [Docker](#docker)
+      * [Dependency](#dependency)
+   * [Usage](#usage)
+      * [Jupyter Notebook](#jupyter-notebook)
+      * [CLI](#cli)
+   * [Features](#features)
+   * [How to make your own custom gym environment?](#how-to-make-your-own-custom-gym-environment)
+   * [Authors](#authors)
+   * [Subjects](#subjects)
+   * [License](#license)
 
+<!--te-->
+
+Getting started
+===============
+
+Local Installation
+------------------
+
+PIP dependency : [requirement.txt](https://github.com/DHDev0/Muzero-unplugged/blob/main/requirements.txt)
+~~~bash
+git clone https://github.com/DHDev0/Muzero-unplugged.git
+
+cd Muzero
+
+pip install -r requirements.txt
+~~~
+
+If you experience some difficulty refer to the first cell [Tutorial](https://github.com/DHDev0/Muzero-unplugged/blob/main/tutorial.ipynb) or use the dockerfile.
 
 Docker
 ------
@@ -44,17 +83,47 @@ Delete the container:
 docker rmi -f muzero
 ~~~ 
 
+Dependency
+----------
+Language : 
+* Python 3.8 to 3.10
+(bound by the retro compatibility of Ray and Pytorch)
 
+Library : 
+* torch 1.13.0
+* torchvision 0.14.0
+* ray 2.0.1 
+* gym 0.26.2 (incoming gymnasium 0.27.0)
+* matplotlib >=3.0
+* numpy 1.21.5
+
+More details at: [requirement.txt](https://github.com/DHDev0/Muzero-unplugged/blob/main/requirements.txt)
+
+
+Usage
+=====
+
+Jupyter Notebook
+---------------
+
+For practical example, you can use the [Tutorial](https://github.com/DHDev0/Muzero-unplugged/blob/main/tutorial.ipynb).
 
 
 CLI
 -----------
 
+Set your config file (example): https://github.com/DHDev0/Muzero/blob/main/config/
+
+First and foremost cd to the project folder:
+~~~bash 
+cd Muzero
+~~~
 
 Construct your dataset through experimentation.
 ~~~bash 
 python muzero_cli.py human_buffer config/name_config.json
 ~~~
+
 Training :
 ~~~bash 
 python muzero_cli.py train config/name_config.json
@@ -87,7 +156,6 @@ python muzero_cli.py train report play benchmark play config/name_config.json
 
 Features
 ========
-
 
 Core Muzero feature:
 * [x] Work for any Gymnasium environments/games. (any combination of continous or/and discrete action and observation space)
@@ -134,6 +202,14 @@ TODO:
 * [ ] Training and deploy on cloud cluster using Kubeflow, Airflow or Ray for aws,gcp and azure.
 
 
+
+How to make your own custom gym environment?
+================================================
+
+Refer to the [Gym documentation](https://gymnasium.farama.org/tutorials/environment_creation/)
+
+You will be able to call your custom gym environment in muzero after you register it in gym.
+
 Authors  
 ==========
 
@@ -149,4 +225,6 @@ License
 =======
 
 [GPL-3.0 license](https://www.gnu.org/licenses/quick-guide-gplv3.html)  
+
+
 
