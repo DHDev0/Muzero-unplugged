@@ -124,7 +124,7 @@ def main(cli_input):
                                                         MostRecentBuffer(max_buffer_size = 20),
                                                         HighestRewardBuffer()],
                                      reanalyse_fraction=config["replaybuffer"]["reanalyse_fraction"], # porcentage/100 of reanalyze vs new_game
-                                     reanalyse_fraction_mode = config["replaybuffer"]["reanalyse_fraction_mode "] # "chance" or "ratio"
+                                     reanalyse_fraction_mode = config["replaybuffer"]["reanalyse_fraction_mode"] # "chance" or "ratio"
                                      ) # 'uniform' or "priority" (will sample position in game randomly or with a priority distribution)
 
         # # # init/set the monte carlos tree search parameter
