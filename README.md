@@ -184,7 +184,7 @@ Core Muzero feature:
 
 
 
-The Muzero Reanalyze new add-on features include:  
+Muzero Unplugged new add-on features include:  
   
 * [X] The ability to accommodate any number of players with the provision of player cycle information.
 * [X] The incorporation of reanalyze buffer(offline learning) and reanalyze ratio functionality.
