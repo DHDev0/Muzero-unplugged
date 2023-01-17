@@ -51,7 +51,7 @@ Docker
  
 Build image: (building time: 22 min , memory consumption: 8.75 GB)
 ~~~bash
-docker build -t muzero .
+docker build -t muzero_unplugged .
 ~~~ 
 (do not forget the ending dot)
 
