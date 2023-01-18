@@ -739,7 +739,7 @@ def human_demonstration_buffer_builder(
          ):
 
     try:
-        rendermode = gym.make("CartPole-v1", render_mode=None).metadata['render_modes'][0]
+        rendermode = gym.make(gym_game, render_mode=None).metadata['render_modes'][0]
         env = gym.make(gym_game, render_mode=rendermode) 
     except:
         env = gym.make(gym_game, render_mode=render_mode)
