@@ -781,11 +781,12 @@ def human_demonstration_buffer_builder(
     print(f"Save all game to: {path_to_store_game}")
 
 ##########################################################################################################################
+# # # to see all Gym env available:
 def Show_all_gym_env():
     for h in [ i[0] for i in list(gym.envs.registry.items())]:
         print(h)
         
-# # # to see all Gym env available:
+# # # to see specific Gym env configuration:
 def Show_specific_gym_env_structure(env):
     env = gym.make(env)
     print(f'{env} :| observation space: {env.observation_space} | action space : {env.action_space} |')
