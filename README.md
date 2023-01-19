@@ -167,6 +167,7 @@ Core Muzero feature:
 * [x] MCTS with 0 simulation (use of prior) or any number of simulation.
 * [x] Model weights automatically saved at best selfplay average reward.
 * [x] Priority or Uniform for sampling in replay buffer.
+* [X] Manage illegal move with negative reward.
 * [X] Scale the loss using the importance sampling ratio.
 * [x] Custom "Loss function" class to apply transformation and loss on label/prediction.
 * [X] Load your pretrained model from tag number.

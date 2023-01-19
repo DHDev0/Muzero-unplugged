@@ -117,8 +117,18 @@ class Game():
         #manage feedback observation
         else:
             state = feedback[0]
-            
+        self.feedback_state = state
         return state
+    
+    def step(self,action):
+        try: 
+            next_step = (self.env.step(action))
+        except:
+            obs = self.feedback_state
+            reward = min(-len(self.rewards),-self.limit_of_game_play,-1)
+            done = self.done
+            next_step = (obs,reward,done)
+        return next_step
     
     def close(self):
         return self.env.close()
@@ -229,7 +239,7 @@ class Game():
             # # # apply mouve and return variable of the env
             # # # save game variable to a list to return them 
             #contain [observation, reward, done, info] + [meta_data for som gym env]
-            step_output = (self.env.step(self.action_map[selected_action]))
+            step_output = self.step(self.action_map[selected_action])
 
             #Get the new observation generate by step 
             if self.rgb_observation : 
