@@ -660,7 +660,7 @@ class Muzero:
                 state_normalized, one_hot_encode_action)
             
             # # # next_embedded_state -> policy , value
-            policy, value = self.prediction_function(state_normalized)
+            policy, value = self.prediction_function(next_state_normalized)
             
             # # # We also scale the gradient at the start of the dynamics function by 1/2
             # # # This ensures that the total gradient applied to the dynamics function stays constant.
