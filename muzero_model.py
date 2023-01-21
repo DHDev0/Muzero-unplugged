@@ -346,7 +346,7 @@ class Muzero:
             
             
     def model_obs(self,model_structure,observation_space_dimensions):
-        if "vision" in [model_structure]:
+        if "vision" in model_structure:
             observation_dimension_per_model = (98, 98, 3)
         else:
             observation_dimension_per_model = self.obs_space(observation_space_dimensions)
@@ -360,10 +360,11 @@ class Muzero:
             self.prediction_function = self.prediction_function.type(self.type_format)
                 
     def initiate_model_weight(self):
-        # initialize the model weight and bias
-        self.representation_function.apply(weights_init)
-        self.dynamics_function.apply(weights_init)
-        self.prediction_function.apply(weights_init)
+        if not "vision" in self.model_structure:
+            # initialize the model weight and bias
+            self.representation_function.apply(weights_init)
+            self.dynamics_function.apply(weights_init)
+            self.prediction_function.apply(weights_init)
                 
     def model_parallel(self):
         if torch.cuda.device_count() > 1 and self.device != "cpu":
