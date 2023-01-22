@@ -90,7 +90,6 @@ def play_game(environment=None,
                                                                feedback = feedback,
                                                                iteration = counter)
 
-        monte_carlo_tree_search.cycle.global_reset()
         environment.store_search_statistics(tree)
         counter += 1
         
