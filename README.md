@@ -207,7 +207,7 @@ TODO:
 How to make your own custom gym environment?
 ================================================
 
-Refer to the [Gym documentation](https://gymnasium.farama.org/tutorials/environment_creation/)
+Refer to the [Gym documentation](https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/)
 
 You will be able to call your custom gym environment in muzero after you register it in gym.
 
