@@ -10,6 +10,7 @@ Key features :
 - The introduction of these two new buffers allows the algorithm to work with environments that do not have a simulator, or to reduce the amount of simulation needed as it does not need to wait for the simulator to generate new states.  
 - The ability to create your own expert demonstrations by experimenting with the simulation.  
 
+[MuZero](https://github.com/DHDev0/Muzero) -> [MuZero Unplugged](https://github.com/DHDev0/Muzero-unplugged) -> [Stochastic MuZero](https://github.com/DHDev0/Stochastic-muzero)
 
 Table of contents
 =================
