@@ -353,7 +353,7 @@ def play_game_from_checkpoint(game_to_play='CartPole-v1',
     import random
     import time
 
-    import gym
+    import gymnasium as gym
 
     from game import Game
     from monte_carlo_tree_search import (MinMaxStats, Monte_carlo_tree_search,
