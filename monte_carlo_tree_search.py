@@ -203,7 +203,7 @@ class Monte_carlo_tree_search():
         policy = policy[0]
         policy_reshape = (policy + 1e-12) 
         policy = policy_reshape / policy_reshape.sum()
-        bound = min(self.maxium_action_sample,policy.shape[0])
+        bound = policy.shape[0]
         for i in np.sort(np.random.choice(policy.shape[0],bound, p=policy, replace=False)):
             self.root.children[i] = Node(prior=policy[i])
             self.root.children[i].to_play = self.cycle.proximate_player_step(self.root.to_play)
