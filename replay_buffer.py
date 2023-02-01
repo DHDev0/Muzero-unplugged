@@ -151,15 +151,14 @@ class ReplayBuffer():
                         
         return position
     
-    def sample_position(self, game):
-        tag = self.buffer.index(game)
-        soft_prio_position = self.prio_position[tag]/self.prio_position[tag].sum()
-        self.buffer[tag].mouve_prio = soft_prio_position
-        
+    def sample_position(self, game):        
         if game.game_length == 0:
             raise Exception("Game need to return at least one reward")
         
         elif self.position_sampling == "priority":
+            tag = self.buffer.index(game)
+            soft_prio_position = self.prio_position[tag]/self.prio_position[tag].sum()
+            self.buffer[tag].mouve_prio = soft_prio_position
             # # priority sampling
             position =  np.random.choice(list(range(len(soft_prio_position))), p=soft_prio_position)
             
